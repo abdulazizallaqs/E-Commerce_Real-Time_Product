@@ -7,6 +7,8 @@ This repository contains a lightweight end-to-end capstone project for ingesting
 - Validate incoming payloads using JSON schema checks
 - Write a local bronze artifact and a downstream gold artifact
 - Provide a lightweight RAG-style retrieval layer for product search
+- Support exact-product-id prioritization and a local vector index workflow
+- Mask PII before logs and RAG payloads to satisfy governance expectations
 - Offer a GitHub-friendly structure that can be reviewed and run locally
 
 ## Repository structure
@@ -51,7 +53,13 @@ docker compose up -d
 
 Then run the producer or consumer scripts under [ingestion](ingestion).
 
+## Architecture notes
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the data flow diagram and the component summary.
+
+## PII handling
+Fields such as customer_name, email, phone, and name are masked before they reach logs or RAG-related payloads. The helper is available in [quality_gates/governance.py](quality_gates/governance.py).
+
 ## Notes
 - The current implementation is intentionally robust for local execution and fallback mode, which makes it easier to run and review in a classroom or capstone environment.
 - Delta and Kafka can be environment-sensitive on Windows, so the repository includes a deterministic local artifact path that works even when those services are unavailable.
-- The Airflow DAG is a scaffold and can be expanded for production orchestration later.
+- The Airflow DAG is scaffolded to show the intended orchestration order for bronze, quality, silver/gold, and vector indexing.

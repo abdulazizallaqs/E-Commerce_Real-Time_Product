@@ -18,8 +18,9 @@ def hybrid_search(query: str, products: List[Dict[str, Any]], top_k: int = 3) ->
     for chunk in chunks:
         document_tokens = set(tokenize(chunk["text"]))
         overlap = len(query_tokens & document_tokens)
+        exact_match = 1000 if str(query).lower() == str(chunk.get("source_id", "")).lower() else 0
         phrase_bonus = 2 if query.lower() in chunk["text"].lower() else 0
-        score = overlap + phrase_bonus
+        score = overlap + phrase_bonus + exact_match
         if score > 0:
             ranked.append({**chunk, "score": score})
 
