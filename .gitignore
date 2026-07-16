@@ -1,0 +1,26 @@
+# Python Virtual Environment
+venv/
+.venv/
+.venv-1/
+__pycache__/
+*.py[cod]
+
+# Docker & Database local storage
+postgres_data/
+qdrant_storage/
+kafka_data/
+
+# Spark & Delta Lake local files
+spark-warehouse/
+metastore_db/
+derby.log
+
+# Logs and temporary output
+*.log
+pipeline_logs.txt
+pipeline_run.log
+output.log
+tmp_test.jsonl
+
+# Secrets and environment variables
+.env

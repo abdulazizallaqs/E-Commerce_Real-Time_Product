@@ -1,0 +1,2 @@
+{"product_id": "FALLBACK_001", "name": "Sample Product", "description": "Fallback record generated locally", "price": 19.99, "stock_quantity": 25, "category": "General", "timestamp": "2026-07-16T00:00:00"}
+{"product_id": "FALLBACK_002", "name": "Recovered Product", "description": "Fallback record after Kafka read failure", "price": 24.99, "stock_quantity": 6, "category": "General", "timestamp": "2026-07-16T00:00:00"}
