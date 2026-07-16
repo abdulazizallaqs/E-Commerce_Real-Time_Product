@@ -62,7 +62,7 @@ def read_messages(spark):
 
 
 def build_schema(spark):
-    from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType, TimestampType
+    from pyspark.sql.types import StructType, StructField, StringType, DoubleType, IntegerType
     return StructType([
         StructField("product_id", StringType(), True),
         StructField("name", StringType(), True),
@@ -70,7 +70,7 @@ def build_schema(spark):
         StructField("price", DoubleType(), True),
         StructField("stock_quantity", IntegerType(), True),
         StructField("category", StringType(), True),
-        StructField("timestamp", TimestampType(), True),
+        StructField("timestamp", StringType(), True),   # كان TimestampType
     ])
 
 

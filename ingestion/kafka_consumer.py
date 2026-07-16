@@ -11,7 +11,7 @@ consumer = KafkaConsumer(
     auto_offset_reset='earliest',
     enable_auto_commit=True,
     group_id='inventory-validator-group',
-    value_serializer=lambda x: json.loads(x.decode('utf-8'))
+    value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
             if is_valid:
                 print(f"[valid] {product['product_id']} ({product['name']}) matches the schema")
             else:
-                print(f"[invalid] {product['product_id']} rejected: {reason}")
+                print(f"[invalid] {product.get('product_id', 'unknown')} rejected: {reason}")
     except KeyboardInterrupt:
         print("\nStopped consumer.")
     finally:

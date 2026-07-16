@@ -3,7 +3,7 @@ from rag_pipeline.hybrid_search import hybrid_search
 from quality_gates.governance import mask_pii
 
 
-def test_mask_pii_masks_sensitive_fields():
+def test_mask_pii_masks_sensitive_fields_only():
     record = {
         "product_id": "p1",
         "name": "Wireless Mouse",
@@ -15,13 +15,26 @@ def test_mask_pii_masks_sensitive_fields():
     assert masked["customer_name"] == "[REDACTED]"
     assert masked["email"] == "[REDACTED]"
     assert masked["phone"] == "[REDACTED]"
+    assert masked["name"] == "Wireless Mouse"  # product name must survive masking
 
 
 def test_hybrid_search_prefers_exact_product_id_matches():
     products = [
-        {"product_id": "x100", "name": "Keyboard", "description": "Mechanical keyboard", "category": "Electronics", "price": 199.0, "stock_quantity": 10},
-        {"product_id": "p1", "name": "Wireless Mouse", "description": "Ergonomic wireless mouse", "category": "Electronics", "price": 39.99, "stock_quantity": 12},
+        {"product_id": "x100", "name": "Keyboard", "description": "Mechanical keyboard",
+         "category": "Electronics", "price": 199.0, "stock_quantity": 10},
+        {"product_id": "p1", "name": "Wireless Mouse", "description": "Ergonomic wireless mouse",
+         "category": "Electronics", "price": 39.99, "stock_quantity": 12},
     ]
     results = hybrid_search("p1", products, top_k=3)
     assert results[0]["source_id"] == "p1"
-    assert results[0]["score"] >= 100
+    assert results[0]["match_type"] == "exact"
+
+
+def test_hybrid_search_semantic_fallback_returns_results():
+    products = [
+        {"product_id": "p2", "name": "Yoga Mat", "description": "Non-slip exercise mat for yoga",
+         "category": "Sports", "price": 25.0, "stock_quantity": 30},
+    ]
+    results = hybrid_search("mat for exercising", products, top_k=3)
+    assert len(results) >= 1
+    assert results[0]["match_type"] == "semantic"

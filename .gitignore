@@ -24,3 +24,14 @@ tmp_test.jsonl
 
 # Secrets and environment variables
 .env
+# Generated Delta/lakehouse artifacts
+lakehouse/data/bronze/_delta_log/
+lakehouse/data/silver/
+lakehouse/data/gold/_delta_log/
+lakehouse/data/bronze/*.parquet
+lakehouse/data/gold/*.parquet
+
+# Virtual environments
+.venv/
+.venv-lakehouse/
+.venv-airflow/

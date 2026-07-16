@@ -30,7 +30,7 @@ def build_schema(spark):
         StructField("price", DoubleType(), True),
         StructField("stock_quantity", IntegerType(), True),
         StructField("category", StringType(), True),
-        StructField("timestamp", TimestampType(), True),
+        StructField("timestamp", StringType(), True),
     ])
 
 

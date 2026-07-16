@@ -3,4 +3,8 @@ jsonschema==4.21.1
 pyspark==3.5.0
 delta-spark==3.1.0
 pytest==8.3.3
-apache-airflow==2.9.3
+sentence-transformers==3.0.1
+numpy==1.26.4
+great-expectations==0.18.19
+pandas==2.2.2
+openlineage-python==1.19.0
