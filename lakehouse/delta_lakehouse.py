@@ -129,7 +129,7 @@ def upsert_silver(quality_gate_fn=None) -> dict:
         "product_id", keep="last"
     )
 
-    bronze_df["is_deleted"] = bronze_df["op"] == "d"
+    bronze_df.loc[:, "is_deleted"] = bronze_df["op"] == "d"
     bronze_df["updated_at"] = bronze_df["ingested_at"]
 
     if quality_gate_fn is not None:

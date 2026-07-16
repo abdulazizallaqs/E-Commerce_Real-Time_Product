@@ -21,8 +21,8 @@ def main() -> int:
     print("E-Commerce Real-Time Pipeline demo")
     print(f"Repository root: {ROOT}")
     steps = [
-        ("Lakehouse bronze pipeline", ROOT / "lakehouse" / "spark_pipeline.py"),
-        ("Silver-to-gold transformation", ROOT / "lakehouse" / "spark_silver_to_gold.py"),
+        ("Delta Lakehouse (bronze -> silver -> gold, with quarantine)",
+         ROOT / "lakehouse" / "delta_lakehouse.py"),
     ]
     for name, script in steps:
         status = run_step(name, script)
@@ -30,10 +30,12 @@ def main() -> int:
             return status
 
     artifacts = [
-        ROOT / "lakehouse" / "data" / "bronze" / "bronze_records.jsonl",
-        ROOT / "lakehouse" / "data" / "gold" / "gold_records.jsonl",
+        ROOT / "lakehouse" / "data" / "bronze",
+        ROOT / "lakehouse" / "data" / "silver",
+        ROOT / "lakehouse" / "data" / "gold",
+        ROOT / "lakehouse" / "data" / "quarantine",
     ]
-    print("\nGenerated artifacts:")
+    print("\nGenerated Delta tables:")
     for artifact in artifacts:
         if artifact.exists():
             print(f"- {artifact.relative_to(ROOT)}")

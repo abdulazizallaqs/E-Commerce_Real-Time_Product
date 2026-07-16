@@ -13,14 +13,10 @@ def run_ingestion():
     subprocess.run(["python", "ingestion/kafka_producer.py"], check=True)
 
 
-def run_bronze():
+def run_lakehouse():
+    """Runs the full bronze -> silver -> gold Delta pipeline (delta-rs based)."""
     import subprocess
-    subprocess.run(["python", "lakehouse/spark_pipeline.py"], check=True)
-
-
-def run_silver_to_gold():
-    import subprocess
-    subprocess.run(["python", "lakehouse/spark_silver_to_gold.py"], check=True)
+    subprocess.run(["python", "lakehouse/delta_lakehouse.py"], check=True)
 
 
 def run_quality_gate():
@@ -30,7 +26,7 @@ def run_quality_gate():
 
 def run_rag_indexing():
     import subprocess
-    subprocess.run(["python", "-c", "from rag_pipeline.vector_store import SimpleVectorStore; from rag_pipeline.chunking import build_chunks; import json; store=SimpleVectorStore(); store.upsert_chunks(build_chunks([{'product_id': 'demo', 'name': 'Demo', 'description': 'demo product', 'category': 'General', 'price': 1.0, 'stock_quantity': 1}]))"], check=True)
+    subprocess.run(["python", "-c", "from rag_pipeline.vector_store import SimpleVectorStore; from rag_pipeline.chunking import build_chunks; store=SimpleVectorStore(); store.upsert_chunks(build_chunks([{'product_id': 'demo', 'name': 'Demo', 'description': 'demo product', 'category': 'General', 'price': 1.0, 'stock_quantity': 1}]))"], check=True)
 
 
 if DAG is not None and PythonOperator is not None:
@@ -42,11 +38,10 @@ if DAG is not None and PythonOperator is not None:
         tags=["ecommerce", "capstone"],
     ) as dag:
         ingest_task = PythonOperator(task_id="ingest_products", python_callable=run_ingestion)
-        bronze_task = PythonOperator(task_id="run_bronze", python_callable=run_bronze)
         quality_gate_task = PythonOperator(task_id="quality_gate", python_callable=run_quality_gate)
-        silver_to_gold_task = PythonOperator(task_id="silver_to_gold", python_callable=run_silver_to_gold)
+        lakehouse_task = PythonOperator(task_id="run_lakehouse", python_callable=run_lakehouse)
         rag_index_task = PythonOperator(task_id="update_vector_index", python_callable=run_rag_indexing)
 
-        ingest_task >> bronze_task >> quality_gate_task >> silver_to_gold_task >> rag_index_task
+        ingest_task >> quality_gate_task >> lakehouse_task >> rag_index_task
 else:
     dag = None

@@ -1,7 +1,7 @@
 kafka-python-ng==2.2.2
 jsonschema==4.21.1
-pyspark==3.5.0
-delta-spark==3.1.0
+deltalake==1.6.2
+pyarrow
 pytest==8.3.3
 sentence-transformers==3.0.1
 numpy==1.26.4

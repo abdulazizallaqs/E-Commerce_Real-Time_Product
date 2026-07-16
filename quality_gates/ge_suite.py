@@ -11,19 +11,15 @@ def run_ge_suite(records: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     df = pd.DataFrame(records)
     context = gx.get_context(mode="ephemeral")
-    data_source = context.data_sources.add_pandas("ecommerce_products")
-    data_asset = data_source.add_dataframe_asset(name="products")
-    batch_definition = data_asset.add_batch_definition_whole_dataframe("full_batch")
-    batch = batch_definition.get_batch(batch_parameters={"dataframe": df})
+    validator = context.sources.pandas_default.read_dataframe(df)
 
-    suite = context.suites.add(gx.ExpectationSuite(name="product_quality_suite"))
-    suite.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="product_id"))
-    suite.add_expectation(gx.expectations.ExpectColumnValuesToNotBeNull(column="name"))
-    suite.add_expectation(gx.expectations.ExpectColumnValuesToBeBetween(column="price", min_value=0))
-    suite.add_expectation(gx.expectations.ExpectColumnValuesToBeBetween(column="stock_quantity", min_value=0))
+    validator.expect_column_values_to_not_be_null("product_id")
+    validator.expect_column_values_to_not_be_null("name")
+    validator.expect_column_values_to_be_between("price", min_value=0)
+    validator.expect_column_values_to_be_between("stock_quantity", min_value=0)
 
-    results = batch.validate(suite)
+    result = validator.validate()
     return {
-        "success": results.success,
-        "statistics": results.statistics,
+        "success": result.success,
+        "statistics": result.statistics,
     }
